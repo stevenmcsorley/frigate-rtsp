@@ -1,0 +1,54 @@
+mqtt:
+  host: mosquitto  # Use the service name defined in docker-compose
+  port: 1883
+  # user: your-mqtt-username  # Uncomment and replace if you have set up authentication
+  # password: your-mqtt-password  # Uncomment and replace if you have set up authentication
+
+cameras:
+  frontyard:
+    ffmpeg:
+      inputs:
+        - path: rtsp://user:password@IPADRESS:554/stream1
+          roles:
+            - detect
+            - rtmp
+            - record
+    detect:
+      width: 1920
+      height: 1080
+      fps: 15
+      stationary:
+        interval: 0
+        threshold: 100
+    objects:
+      track:
+        - person
+        - car
+        - cat
+        - dog
+      filters:
+        person:
+          mask: 0,0,1920,0,1920,540,0,540  # Ignore top half
+        car:
+          mask: 0,0,1920,0,1920,540,0,540  # Ignore top half
+        cat:
+          mask: 0,0,1920,0,1920,540,0,540  # Ignore top half
+        dog:
+          mask: 0,0,1920,0,1920,540,0,540  # Ignore top half
+    zones:
+      bottom_half:
+        coordinates: 0,540,1920,540,1920,1080,0,1080
+        objects:
+          - person
+          - car
+          - cat
+          - dog
+    record:
+      enabled: True
+      retain:
+        days: 7
+        mode: motion
+      events:
+        retain:
+          default: 14
+          mode: active_objects

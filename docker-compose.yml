@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+
+  frigate:
+    container_name: frigate
+    image: ghcr.io/blakeblackshear/frigate:stable  # Use the correct image for your architecture
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config.yml:/config/config.yml:ro  # Mount the Frigate config file
+      - /Users/<username>/nvr/storage:/media/frigate  # Mount the storage directory for recordings
+    ports:
+      - "3002:5000"  # Port for accessing the Frigate web UI
+    environment:
+      FRIGATE_RTSP_PASSWORD: "password"  # Set the RTSP password
+    shm_size: '1gb'  # Adjust shared memory size as needed
