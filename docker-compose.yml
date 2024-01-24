@@ -1,5 +1,46 @@
 version: '3.9'
 services:
+  # compreface:
+  #   container_name: compreface
+  #   image: exadel/compreface-core:latest  # Use the correct image tag
+  #   ports:
+  #     - "8000:8000"
+  #   environment:
+  #     - POSTGRES_USER=compreface
+  #     - POSTGRES_PASSWORD=compreface
+  #     - POSTGRES_DB=compreface
+  #   volumes:
+  #     - compreface-data:/var/lib/compreface
+  #   depends_on:
+  #     - compreface-db
+
+  # compreface-db:
+  #   container_name: compreface-db
+  #   image: postgres:11.5
+  #   environment:
+  #     - POSTGRES_USER=compreface
+  #     - POSTGRES_PASSWORD=compreface
+  #     - POSTGRES_DB=compreface
+  #   volumes:
+  #     - compreface-db-data:/var/lib/postgresql/data
+
+  deepstack:
+    container_name: deepstack
+    image: deepquestai/deepstack:latest  # Use the correct image tag
+    ports:
+      - "5005:5000"
+    environment:
+      - VISION-DETECTION=True
+      - VISION-FACE=True
+    volumes:
+      - deepstack-data:/datastore
+  # ai-server:
+  #   image: codeproject/ai-server
+  #   ports:
+  #     - 32168:32168
+  #   volumes:
+  #     - ./data:/etc/codeproject/ai
+  #     - ./modules:/app/modules
   mosquitto:
     image: eclipse-mosquitto
     container_name: mosquitto
@@ -18,9 +59,26 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./config.yml:/config/config.yml:ro  # Mount the Frigate config file
-      - /Users/<username>/nvr/storage:/media/frigate  # Mount the storage directory for recordings
+      - /Users/<user>/nvr/storage:/media/frigate  # Mount the storage directory for recordings
     ports:
       - "3002:5000"  # Port for accessing the Frigate web UI
     environment:
-      FRIGATE_RTSP_PASSWORD: "password"  # Set the RTSP password
+      FRIGATE_RTSP_PASSWORD: "admin"  # Set the RTSP password
+      PLUS_API_KEY: "api-key"  # Set the Frigate+ API key
     shm_size: '1gb'  # Adjust shared memory size as needed
+
+  double-take:
+    container_name: double-take
+    image: skrashevich/double-take:latest
+    restart: unless-stopped
+    volumes:
+      - ./doubletake:/.storage/config  # Mount the Double Take config file to the correct location
+      - double-take:/.storage
+    ports:
+      - 3004:3000
+
+volumes:
+  double-take:
+  # compreface-data:
+  # compreface-db-data:
+  deepstack-data:

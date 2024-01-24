@@ -8,7 +8,7 @@ cameras:
   frontyard:
     ffmpeg:
       inputs:
-        - path: rtsp://user:password@IPADRESS:554/stream1
+        - path: rtsp://user:password@8IPADDRESS:554/stream1
           roles:
             - detect
             - rtmp
@@ -26,6 +26,9 @@ cameras:
         - car
         - cat
         - dog
+        - couch
+        - chair
+        - mirror
       filters:
         person:
           mask: 0,0,1920,0,1920,540,0,540  # Ignore top half
@@ -43,6 +46,9 @@ cameras:
           - car
           - cat
           - dog
+          - couch
+          - chair
+          - mirror
     record:
       enabled: True
       retain:
@@ -52,3 +58,5 @@ cameras:
         retain:
           default: 14
           mode: active_objects
+    snapshots: # <----- Enable snapshots
+      enabled: True
